@@ -1,5 +1,6 @@
 .*.sw?
 .notouch
+.vscode
 /build
 /cmd/metrictank/metrictank
 /cmd/mt-aggs-explain/mt-aggs-explain
@@ -21,4 +22,3 @@
 build_docker
 build_pkg
 build_tmp
-.vscode
