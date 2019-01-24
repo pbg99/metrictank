@@ -124,7 +124,7 @@ func (ms *AggMetrics) Get(key schema.MKey) (Metric, bool) {
 	return m, ok
 }
 
-func (ms *AggMetrics) GetOrCreate(key schema.MKey, schemaId, aggId uint16, interval int) Metric {
+func (ms *AggMetrics) GetOrCreate(key schema.MKey, schemaId, aggId uint16, interval uint32) Metric {
 	var m *AggMetric
 	// in the most common case, it's already there and an Rlock is all we need
 	ms.RLock()
