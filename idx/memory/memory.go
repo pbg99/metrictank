@@ -401,6 +401,10 @@ func (m *MemoryIdx) MetaTagRecordList(orgId uint32) []idx.MetaTagRecord {
 	return res
 }
 
+func (m *MemoryIdx) EnrichWithMetaTags(orgId uint32, in []map[string]string) []map[string]string {
+	return in
+}
+
 // indexTags reads the tags of a given metric definition and creates the
 // corresponding tag index entries to refer to it. It assumes a lock is
 // already held.

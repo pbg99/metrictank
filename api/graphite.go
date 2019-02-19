@@ -670,7 +670,8 @@ func (s *Server) executePlan(ctx context.Context, orgId uint32, plan expr.Plan) 
 		log.Debugf("HTTP Render %s - arch:%d archI:%d outI:%d aggN: %d from %s", req, req.Archive, req.ArchInterval, req.OutInterval, req.AggNum, req.Node.GetName())
 	}
 
-	out, err := s.getTargets(ctx, reqs)
+	var out models.SeriesByTarget
+	out, err = s.getTargets(ctx, reqs)
 	if err != nil {
 		log.Errorf("HTTP Render %s", err.Error())
 		return nil, err
@@ -695,6 +696,15 @@ func (s *Server) executePlan(ctx context.Context, orgId uint32, plan expr.Plan) 
 	preRun := time.Now()
 	out, err = plan.Run(data)
 	planRunDuration.Value(time.Since(preRun))
+	if err != nil {
+		return nil, err
+	}
+
+	err = out.UpdateAllTags(s.MetricIndex.EnrichWithMetaTags(orgId, out.GetAllTags()))
+	if err != nil {
+		return nil, err
+	}
+
 	return out, err
 }
 

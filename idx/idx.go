@@ -145,4 +145,9 @@ type MetricIndex interface {
 	// MetaTagRecordList takes an org id and returns the list of all meta tag records
 	// of that given org.
 	MetaTagRecordList(orgId uint32) []MetaTagRecord
+
+	// EnrichWithMetaTags takes a slice of slices of tags as strings. Each slice of
+	// strings represents the set of tags of a metric. Then it enriches them according
+	// to the rules defined in the meta records and returns them while keeping the order
+	EnrichWithMetaTags(orgId uint32, tags []map[string]string) []map[string]string
 }

@@ -2,6 +2,7 @@ package models
 
 import (
 	"bytes"
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -95,6 +96,37 @@ type SeriesByTarget []Series
 func (g SeriesByTarget) Len() int           { return len(g) }
 func (g SeriesByTarget) Swap(i, j int)      { g[i], g[j] = g[j], g[i] }
 func (g SeriesByTarget) Less(i, j int) bool { return g[i].Target < g[j].Target }
+
+func (series SeriesByTarget) GetAllTags() []map[string]string {
+	tags := make([]map[string]string, len(series))
+	for i, s := range series {
+		tags[i] = s.Tags
+		tags[i]["name"] = s.Target
+	}
+	return tags
+}
+
+// UpdateAllTags takes a slice of sets of tags and adds them to its series.
+// it is important that the order of the sets of tags corresponds with the order
+// of the series in this SeriesByTarget
+func (series SeriesByTarget) UpdateAllTags(updated []map[string]string) error {
+	if len(updated) < len(series) {
+		return fmt.Errorf("UpdateAllTags: Invalid slice of tag-sets, not enough entries")
+	}
+	for i, tags := range updated {
+		for tag, value := range tags {
+			if tag == "name" {
+				continue
+			}
+
+			if _, ok := series[i].Tags[tag]; !ok {
+				series[i].Tags[tag] = value
+			}
+		}
+	}
+
+	return nil
+}
 
 // regular graphite output
 func (series SeriesByTarget) MarshalJSONFast(b []byte) ([]byte, error) {
